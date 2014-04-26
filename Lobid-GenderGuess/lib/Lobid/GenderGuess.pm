@@ -49,7 +49,7 @@ has 'status'   => ( is => 'rw', isa => 'Str', default => 'OK' )
   ;    # ever the optimistic one..
 has 'diagnostic' => ( is => 'rw', isa => 'Str' );
 has 'gender'     => ( is => 'rw', isa => 'Str' );
-has 'name'     => ( is => 'rw', isa => 'Str' );
+has 'name'       => ( is => 'rw', isa => 'Str' );
 has 'statistics' => ( is => 'rw', isa => 'HashRef' );
 
 =head2 guess(Name=>'Sarah')
@@ -67,9 +67,8 @@ sub guess {
     my $m_ratio       = undef;
     my $total_count   = undef;
     my $gender_count  = undef;
-    my %Gender        = (male=>0, female=>0, unknown=>0);
-    my %Statistics = ();
-    
+    my %Gender        = ( male => 0, female => 0, notKnown => 0 );
+    my %Statistics    = ();
 
     unless ( defined( $p{Name} ) ) {
         $self->status('Error');
@@ -78,7 +77,8 @@ sub guess {
 
     }
 
-    $query_url = $self->api_base . $self->api_path . "?size=100&name=" . $p{Name};
+    $query_url =
+      $self->api_base . $self->api_path . "?size=100&name=" . $p{Name};
 
     # $Curl->setopt( CURLOPT_HEADER, 1 );
     $Curl->setopt( CURLOPT_URL,       $query_url );
@@ -107,30 +107,26 @@ sub guess {
             if ( exists( $Gender{$1} ) ) {
                 $Gender{$1}++;
             }
-            else { # maybe more than female,male,unknown?
+            else {    # maybe more than female,male,unknown?
                 $Gender{$1} = 1;
 
             }
 
         }
-      
 
     }
-  
 
-    $self->name($p{Name});
-    
+    $self->name( $p{Name} );
+
     # adopt binary working hypothesis..
     $m_ratio = ( 100 / ( $Gender{male} + $Gender{female} ) ) * $Gender{male};
 
-    $Statistics{TotalCount} = $total_count;
-    $Statistics{GenderCount} = $gender_count;
-    $Statistics{GenderDistribution} = \%Gender;
-    $Statistics{GenderRatio}->{Male} = $m_ratio;
-    $Statistics{GenderRatio}->{Female} = 100-$m_ratio;
-    
-                                                                                                    
-    
+    $Statistics{TotalCount}            = $total_count;
+    $Statistics{GenderCount}           = $gender_count;
+    $Statistics{GenderDistribution}    = \%Gender;
+    $Statistics{GenderRatio}->{Male}   = $m_ratio;
+    $Statistics{GenderRatio}->{Female} = 100 - $m_ratio;
+
     # define 40-80% corridor arbitrarily
     switch ($m_ratio) {
 
@@ -140,8 +136,7 @@ sub guess {
         else { $self->gender('unknown'); }
     }
 
-    $self->statistics(\%Statistics);
-    
+    $self->statistics( \%Statistics );
 
 }
 
