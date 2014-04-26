@@ -127,11 +127,11 @@ sub guess {
     $Statistics{GenderRatio}->{Male}   = $m_ratio;
     $Statistics{GenderRatio}->{Female} = 100 - $m_ratio;
 
-    # define 40-80% corridor arbitrarily
+    # define 40-60% corridor arbitrarily
     switch ($m_ratio) {
 
         case __ < 40 { $self->gender('female'); }
-        case __ > 80 { $self->gender('male'); }
+        case __ > 60 { $self->gender('male'); }
 
         else { $self->gender('unknown'); }
     }
