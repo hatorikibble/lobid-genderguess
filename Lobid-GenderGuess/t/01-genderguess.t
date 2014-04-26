@@ -24,4 +24,4 @@ is($Guess->gender,'male',"Gender for 'Peter' is 'male'...");
 $Guess->guess(Name=>'Miriam');
 
 is($Guess->status,'OK',"Status check...");
-is($Guess->gender,'female',"Gender for 'Miram' is 'female'...");
+is($Guess->gender,'female',"Gender for 'Miriam' is 'female'...");
