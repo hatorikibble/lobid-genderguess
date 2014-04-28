@@ -7,7 +7,7 @@ a given name
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
@@ -35,7 +35,7 @@ German authority data with a given name and calculate a gender estimation.
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use Moose;
 
@@ -118,22 +118,32 @@ sub guess {
 
     $self->name( $p{Name} );
 
-    # adopt binary working hypothesis..
-    $m_ratio = ( 100 / ( $Gender{male} + $Gender{female} ) ) * $Gender{male};
+    $Statistics{TotalCount}         = $total_count;
+    $Statistics{GenderCount}        = $gender_count;
+    $Statistics{GenderDistribution} = \%Gender;
 
-    $Statistics{TotalCount}            = $total_count;
-    $Statistics{GenderCount}           = $gender_count;
-    $Statistics{GenderDistribution}    = \%Gender;
-    $Statistics{GenderRatio}->{Male}   = $m_ratio;
-    $Statistics{GenderRatio}->{Female} = 100 - $m_ratio;
+    # do we have any useful data?
+    if ( ( $Gender{male} + $Gender{female} ) > 0 ) {
 
-    # define 40-60% corridor arbitrarily
-    switch ($m_ratio) {
+        # adopt binary working hypothesis..
+        $m_ratio =
+          ( 100 / ( $Gender{male} + $Gender{female} ) ) * $Gender{male};
 
-        case __ < 40 { $self->gender('female'); }
-        case __ > 60 { $self->gender('male'); }
+        $Statistics{GenderRatio}->{Male}   = $m_ratio;
+        $Statistics{GenderRatio}->{Female} = 100 - $m_ratio;
 
-        else { $self->gender('unknown'); }
+        # define 40-60% corridor arbitrarily
+        switch ($m_ratio) {
+
+            case __ < 40 { $self->gender('female'); }
+            case __ > 60 { $self->gender('male'); }
+
+            else { $self->gender('notKnown'); }
+        }
+
+    }
+    else {
+        $self->gender('notKnown');
     }
 
     $self->statistics( \%Statistics );

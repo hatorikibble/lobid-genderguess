@@ -5,7 +5,7 @@ use warnings FATAL => 'all';
 use Test::More;
 use Test::Moose;
 
-plan tests => 12;
+plan tests => 14;
 
 use_ok('Lobid::GenderGuess') || print "Bail out!\n";
 
@@ -25,3 +25,8 @@ $Guess->guess(Name=>'Miriam');
 
 is($Guess->status,'OK',"Status check...");
 is($Guess->gender,'female',"Gender for 'Miriam' is 'female'...");
+
+$Guess->guess(Name=>'xycvxycvgdfsgfdsg');
+
+is($Guess->status,'OK',"Status check...");
+is($Guess->gender,'notKnown',"Gender for 'xycvxycvgdfsgfdsg' is 'notKnown'...");

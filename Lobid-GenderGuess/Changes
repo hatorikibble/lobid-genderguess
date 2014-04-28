@@ -3,3 +3,5 @@ Revision history for Lobid-GenderGuess
 0.01    2014-04-26
         First version, released on an unsuspecting world.
 
+0.02    2014-04-28
+        Exit strategy if no useful data is found
